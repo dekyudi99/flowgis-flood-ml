@@ -73,6 +73,23 @@ class ModelRegistry:
             except Exception as e:
                 logger.warning(f"Could not load NPT scaler: {e}")
 
+        # 4. Multi-Horizon Dedicated Checkpoints (T1, T3, T7) per Province
+        sep_dir = self.models_dir / "separate_horizons"
+        if sep_dir.exists():
+            for prov in ["skt", "spb", "npt"]:
+                for h in ["T1", "T3", "T7"]:
+                    h_dir = sep_dir / prov / h
+                    m_file = h_dir / "best_model.joblib"
+                    s_file = h_dir / "robust_scaler.joblib"
+                    if m_file.exists() and s_file.exists():
+                        reg_key = f"{prov}_{h.lower()}"
+                        try:
+                            self._models[reg_key] = joblib.load(m_file)
+                            self._scalers[reg_key] = joblib.load(s_file)
+                            logger.info(f"Loaded dedicated {prov.upper()} horizon {h} model & scaler ({reg_key}).")
+                        except Exception as e:
+                            logger.warning(f"Could not load separate model {reg_key}: {e}")
+
     def get_model(self, key: str) -> Optional[Any]:
         return self._models.get(key)
 

@@ -3,7 +3,8 @@ from pydantic import BaseModel, Field
 
 class PredictRequest(BaseModel):
     province: str = Field(..., description="Target province: 'sukhothai', 'suphanburi', or 'nakhon_pathom'")
-    lead_time: str = Field(default="1d", description="Forecast horizon: '1d', '3d', or '7d'")
+    lead_time: Optional[str] = Field(default="1d", description="Forecast horizon: '1d'/'T+1', '3d'/'T+3', or '7d'/'T+7'")
+    horizon: Optional[str] = Field(default=None, description="Alias for lead_time: 'T+1', 'T+3', 'T+7'")
     model_name: Optional[str] = Field(default="best", description="Model architecture: 'best', 'lightgbm', or 'catboost'")
     target_date: Optional[str] = Field(default=None, description="ISO Date string (YYYY-MM-DD)")
     threshold: Optional[float] = Field(default=0.50, description="Binary alert decision threshold between 0.0 and 1.0")
