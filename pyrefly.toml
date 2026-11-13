@@ -1,0 +1,27 @@
+preset = "basic"
+project-includes = [
+    "**/*.py",
+]
+search-path = [
+    ".",
+    "app",
+]
+python-interpreter-path = "C:\\Users\\USER\\AppData\\Local\\Python\\bin\\python.exe"
+ignore-missing-imports = [
+    "*",
+    "joblib",
+    "pydantic",
+    "fastapi",
+    "uvicorn",
+    "ee",
+    "lightgbm",
+    "catboost",
+    "sklearn",
+    "numpy",
+    "pandas",
+    "requests",
+    "dotenv",
+    "rasterio",
+    "scipy",
+]
+

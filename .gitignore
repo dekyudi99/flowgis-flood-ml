@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# CPython cache
+.pytest_cache/
+
+# Environments
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Sensitive GEE Credentials and keys
+.private-key.json
+app/services/.private-key.json
+*credentials*.json
+*.key.json
+*.pem
+
+# IDE / VS Code
+.vscode/
+.idea/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+

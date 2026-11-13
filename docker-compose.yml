@@ -1,0 +1,22 @@
+services:
+  flowgis-flood-ml:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flowgis-flood-ml
+    ports:
+      - "8008:8008"
+    env_file:
+      - .env
+    volumes:
+      - ./app:/app/app
+      - ./app/models:/app/app/models
+      - ./app/data:/app/app/data
+    networks:
+      - flowgis_network
+    restart: unless-stopped
+
+networks:
+  flowgis_network:
+    name: flowgis_network
+    external: true
