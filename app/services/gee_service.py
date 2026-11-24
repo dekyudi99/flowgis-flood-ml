@@ -181,46 +181,6 @@ def fetch_gee_rainfall_sum(lat: float, lon: float, start_date: str, end_date: st
         "dataset": "Google Earth Engine (UCSB-CHG/CHIRPS/DAILY)",
     }
 
-
-def fetch_gee_hydro_window(lat: float, lon: float, ref_dt: datetime, horizon_days: int) -> Dict[str, Any]:
-    """
-    Mengambil paket lengkap curah hujan anteseden 7 hari (IMERG/CHIRPS) dan
-    curah hujan prakiraan horizon T+1/T+3/T+7 (NOAA/GFS0P25 atau CHIRPS/IMERG historis)
-    murni dari Google Earth Engine sebagai pengganti input dinamis GISTDA.
-    """
-    start_7d = (ref_dt - timedelta(days=7)).strftime("%Y-%m-%d")
-    ref_str = ref_dt.strftime("%Y-%m-%d")
-    end_horizon = (ref_dt + timedelta(days=horizon_days)).strftime("%Y-%m-%d")
-
-    past_res = fetch_gee_rainfall_sum(lat, lon, start_7d, ref_str)
-    past_7d_mm = past_res["rain_mm"]
-    dataset_used = past_res["dataset"]
-
-    # Untuk tanggal historis (> 3 hari lalu), ambil realisasi hujan pada jendela horizon dari CHIRPS/IMERG;
-    # Untuk tanggal berjalan/live, ambil prakiraan dari NOAA/GFS0P25 di GEE.
-    now_dt = datetime.utcnow()
-    is_historical = (ref_dt + timedelta(days=horizon_days)) < (now_dt - timedelta(days=3))
-
-    horizon_mm: Optional[float] = None
-    if is_historical:
-        hor_res = fetch_gee_rainfall_sum(lat, lon, ref_str, end_horizon)
-        horizon_mm = hor_res["rain_mm"]
-        forecast_tag = f"{dataset_used} + Horizon Window"
-    else:
-        horizon_mm = fetch_gee_gfs_forecast_rain(lat, lon, ref_dt, horizon_days)
-        forecast_tag = "Google Earth Engine (NASA GPM IMERG + NOAA/GFS0P25 Forecast)"
-
-    if horizon_mm is None:
-        horizon_mm = 0.0
-
-    return {
-        "past_7d_rain_mm": round(past_7d_mm, 2),
-        "horizon_rain_mm": round(horizon_mm, 2),
-        "weather_source": forecast_tag,
-        "gee_active": is_gee_ready(),
-    }
-
-
 def fetch_gee_point_spatiotemporal_features(
     df: pd.DataFrame,
     prov_code: str,
